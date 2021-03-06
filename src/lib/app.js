@@ -1,9 +1,12 @@
 import http from 'http'
 import url from 'url'
 
-import parseBody from './body-parser'
-import extractCookies from './cookies'
-import baseFormat from './formatters'
+import parseBody from './body-parser.js'
+import parseMultipart from './multipart.js'
+import extractCookies from './cookies.js'
+import baseFormat from './formatters.js'
+import matchRoute from './matcher.js'
+import cors from './cors.js'
 
 class App {
   constructor (context = {}) {
@@ -11,6 +14,9 @@ class App {
     this.routes = []
     this.context = context
     this.middlewares = []
+    this.authenticators = []
+    this.errorHandler = null
+    this.corsConfiguration = null
   }
 
   async listener (req, res) {
@@ -19,6 +25,23 @@ class App {
       pathname,
       query,
     } = urlObj
+
+    let body = null
+    if (req.headers['content-type'] === 'multipart/form-data') {
+      Object.defineProperty(req, 'multipart', {
+        configurable : true,
+        enumerable : true,
+        writable : false,
+        value : await parseMultipart(req),
+      })
+    } else {
+      Object.defineProperty(req, 'body', {
+        configurable : true,
+        enumerable : true,
+        writable : false,
+        value : await parseBody(req),
+      })
+    }
 
     Object.defineProperties(req, {
       pathname : {
@@ -45,12 +68,12 @@ class App {
         writable : false,
         value : extractCookies(req),
       },
-      body : {
+      cors : {
         configurable : true,
         enumerable : true,
         writable : false,
-        value : await parseBody(req),
-      },
+        value : this.corsConfiguration,
+      }
     })
     Object.defineProperties(res, {
       cookie : {
@@ -113,20 +136,42 @@ class App {
           return this.end(value)
         },
       },
+      error : {
+        configurable : true,
+        enumerable : true,
+        writable : false,
+        value (data = {}, status = 500) {
+          this.writeHead(status, { 'Content-Type' : 'application/json' })
+          return this.end(JSON.stringify(data))
+        },
+      },
     })
 
     const beforeMiddlewares = this.middlewares.filter((mw) => mw.before || (!mw.before && !mw.after))
     const afterMiddlewares = this.middlewares.filter((mw) => mw.after)
-    for (const mw of beforeMiddlewares) {
-      await mw(req, res)
-    }
 
-    for (const route of this.routes) {
-      await route.handler(req, res)
-    }
+    try {
+      for (const mw of beforeMiddlewares) {
+        await mw(req, res)
+      }
 
-    for (const mw of afterMiddlewares) {
-      await mw(req, res)
+      const route = this.routes.find((r) => matchRoute(req, r))
+      if (route) {
+        await route.handler(req, res)
+      } else {
+        throw new Error('404 Not Found')
+      }
+
+      for (const mw of afterMiddlewares) {
+        await mw(req, res)
+      }
+    } catch (err) {
+      if (!this.errorHandler) {
+        return res.error({
+          message : err.message,
+        }, 500)
+      }
+      return this.errorHandler(err, req, res)
     }
   }
 
@@ -138,13 +183,37 @@ class App {
     return this
   }
 
+  addAuthenticator (authenticatorClass) {
+    if (authenticatorClass) {
+      this.authenticators.push(new authenticatorClass())
+    }
+    return this
+  }
+
   use (fn) {
     this.middlewares.push(fn)
     return this
   }
 
+  cors (options) {
+    this.corsConfiguration = options
+    if (this.corsConfiguration) {
+      this.addRoute({
+        name : '__cors',
+        method : 'options',
+        handler : cors,
+      })
+    }
+    return this
+  }
+
   listen (port) {
     this.server.listen(port)
+    return this
+  }
+
+  error (fn) {
+    this.errorHandler = fn
     return this
   }
 }
