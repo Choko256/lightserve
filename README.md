@@ -17,7 +17,7 @@ yarn add lightserve
 ## Usage
 
 ```javascript
-import App from 'lightserve'
+import { App } from 'lightserve'
 
 const app = new App()
 app.addRoute({

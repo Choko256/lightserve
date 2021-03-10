@@ -4,7 +4,7 @@ import url from 'url'
 import parseBody from './body-parser.js'
 import parseMultipart from './multipart.js'
 import extractCookies from './cookies.js'
-import baseFormat from './formatters.js'
+import baseFormat from './formatters/index.js'
 import matchRoute from './matcher.js'
 import cors from './cors.js'
 
