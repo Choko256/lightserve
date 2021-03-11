@@ -9,10 +9,10 @@ export default (req) => {
       })
       .on('end', () => {
         const ct = req.headers['content-type']
-        if (ct.startsWith('application/json')) {
+        if (ct?.startsWith('application/json')) {
           return resolve(JSON.parse(data))
         }
-        if (ct.startsWith('application/x-www-form-urlencoded')) {
+        if (ct?.startsWith('application/x-www-form-urlencoded')) {
           return resolve(qs.parse(data))
         }
         return resolve(data)

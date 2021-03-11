@@ -10,7 +10,7 @@ import cors from './cors.js'
 
 class App {
   constructor (context = {}) {
-    this.server = http.createServer(this.listener)
+    this.server = http.createServer(this.listener.bind(this))
     this.routes = []
     this.context = context
     this.middlewares = []
@@ -20,13 +20,12 @@ class App {
   }
 
   async listener (req, res) {
-    const urlObj = new url.URL(req.url, true)
+    const urlObj = new url.URL(req.url, `https://${req.headers.host}`)
     const {
       pathname,
       query,
     } = urlObj
 
-    let body = null
     if (req.headers['content-type'] === 'multipart/form-data') {
       Object.defineProperty(req, 'multipart', {
         configurable : true,
@@ -147,23 +146,32 @@ class App {
       },
     })
 
-    const beforeMiddlewares = this.middlewares.filter((mw) => mw.before || (!mw.before && !mw.after))
-    const afterMiddlewares = this.middlewares.filter((mw) => mw.after)
+    const beforeMiddlewares = this.middlewares?.filter((mw) => mw.before || (!mw.before && !mw.after))
+    const afterMiddlewares = this.middlewares?.filter((mw) => mw.after)
 
     try {
-      for (const mw of beforeMiddlewares) {
-        await mw(req, res)
+      if (Array.isArray(beforeMiddlewares)) {
+        for (const mw of beforeMiddlewares) {
+          await mw.fn(req, res)
+        }
       }
 
-      const route = this.routes.find((r) => matchRoute(req, r))
+      const route = this.routes?.find((r) => matchRoute(req, r))
       if (route) {
+        if (route.authenticated) {
+          for (const authenticator of this.authenticators) {
+            await authenticator.authenticate(req)
+          }
+        }
         await route.handler(req, res)
       } else {
         throw new Error('404 Not Found')
       }
 
-      for (const mw of afterMiddlewares) {
-        await mw(req, res)
+      if (Array.isArray(afterMiddlewares)) {
+        for (const mw of afterMiddlewares) {
+          await mw.fn(req, res)
+        }
       }
     } catch (err) {
       if (!this.errorHandler) {
@@ -183,9 +191,9 @@ class App {
     return this
   }
 
-  addAuthenticator (authenticatorClass) {
-    if (authenticatorClass) {
-      this.authenticators.push(new authenticatorClass())
+  addAuthenticator (authenticator) {
+    if (authenticator) {
+      this.authenticators.push(authenticator)
     }
     return this
   }
