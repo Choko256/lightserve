@@ -1,6 +1,6 @@
-import qs from 'querystring'
+const qs = require('querystring')
 
-export default (req) => {
+module.exports = (req) => {
   return new Promise((resolve, reject) => {
     let data = ''
     req

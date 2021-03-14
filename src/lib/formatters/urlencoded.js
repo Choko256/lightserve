@@ -1,6 +1,6 @@
-import qs from 'querystring'
+const qs = require('querystring')
 
-export default (data = {}) => {
+module.exports = (data = {}) => {
   return {
     contentType : 'application/x-www-form-urlencoded',
     value : qs.stringify(data),

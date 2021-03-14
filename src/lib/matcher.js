@@ -1,4 +1,4 @@
-export default (req, route) => {
+module.exports = (req, route) => {
   const matchMethod = req.method.toLowerCase() === route.method.toLowerCase()
   let matchPath = false
   if (route.path instanceof RegExp) {

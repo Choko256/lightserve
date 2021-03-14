@@ -1,12 +1,12 @@
-import http from 'http'
-import url from 'url'
+const http = require('http')
+const url = require('url')
 
-import parseBody from './body-parser.js'
-import parseMultipart from './multipart.js'
-import extractCookies from './cookies.js'
-import baseFormat from './formatters/index.js'
-import matchRoute from './matcher.js'
-import cors from './cors.js'
+const parseBody = require('./body-parser')
+const parseMultipart = require('./multipart')
+const extractCookies = require('./cookies')
+const baseFormat = require('./formatters/index')
+const matchRoute = require('./matcher')
+const cors = require('./cors')
 
 class App {
   constructor (context = {}) {
@@ -226,4 +226,4 @@ class App {
   }
 }
 
-export default App
+module.exports = { App }

@@ -1,7 +1,7 @@
-import jsonFormat from './json.js'
-import urlencodedFormat from './urlencoded.js'
+const jsonFormat = require('./json')
+const urlencodedFormat = require('./urlencoded')
 
-export default (formatType = 'json', data = {}) => {
+module.exports = (formatType = 'json', data = {}) => {
   switch (formatType) {
     case 'json':
       return jsonFormat(data)

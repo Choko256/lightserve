@@ -6,7 +6,6 @@
   "repository": "ssh://git@gitv.chaksoft.eu:49005/chaksoft/light-server.git",
   "author": "Michael Chacaton <mchacaton@chaksoft.eu>",
   "license": "GPL-3.0",
-  "type": "module",
   "devDependencies": {
     "@babel/core": "^7.13.8",
     "@babel/eslint-parser": "^7.13.8",

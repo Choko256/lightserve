@@ -1,4 +1,4 @@
-import multiparty from 'multiparty'
+const multiparty = require('multiparty')
 
 const getPartContents = (part) => {
   return new Promise((resolve, reject) => {
@@ -13,7 +13,7 @@ const getPartContents = (part) => {
   })
 }
 
-export default (req) => {
+module.exports = (req) => {
   return new Promise((resolve, reject) => {
     if (req.headers['content-type'] !== 'multipart/form-data') {
       return reject(new Error('cannot parse contents from a non multipart request'))

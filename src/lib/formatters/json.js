@@ -1,4 +1,4 @@
-export default (data = {}) => {
+module.exports = (data = {}) => {
   try {
     return {
       contentType : 'application/json',

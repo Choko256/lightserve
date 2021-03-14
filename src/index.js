@@ -1,9 +1,7 @@
-import App from './lib/app.js'
-import { codes } from './lib/http.js'
-import { Authenticator } from './lib/authenticator.js'
+const { App } = require('./lib/app')
+const { codes } = require('./lib/http')
 
-export {
+module.exports = {
   App,
   codes,
-  Authenticator,
 }

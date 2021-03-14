@@ -1,4 +1,4 @@
-import { codes } from './http.js'
+const { codes } = require('./http')
 
 const toBoolean = (value) => {
   if (typeof value === 'boolean') {
@@ -13,7 +13,7 @@ const toBoolean = (value) => {
   return false
 }
 
-export default async (req, res) => {
+module.exports = async (req, res) => {
   res.writeHead(codes.NO_CONTENT.code, {
     'Access-Control-Allow-Origin' : req.cors.origin,
     'Access-Control-Allow-Methods' : req.cors.allowMethods,

@@ -1,4 +1,4 @@
-const extractCookies = (req) => {
+exports.extractCookies = (req) => {
   const cookieHeader = req.headers.cookie
   if (!cookieHeader) {
     return {}
@@ -10,5 +10,3 @@ const extractCookies = (req) => {
   }, {})
   return cookies
 }
-
-export default extractCookies

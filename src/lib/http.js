@@ -309,4 +309,4 @@ const codes = {
   },
 }
 
-export { codes }
+module.exports = { codes }
