@@ -2,9 +2,13 @@ const multiparty = require('multiparty')
 
 const getPartContents = (part) => {
   return new Promise((resolve, reject) => {
-    let contents = ''
+    let contents = null
     part.on('data', (chunk) => {
-      contents += chunk.toString()
+      if (!contents) {
+        contents = chunk
+      } else {
+        contents = Buffer.concat([contents, chunk])
+      }
     }).on('end', () => {
       resolve(contents)
     }).on('error', (err) => {

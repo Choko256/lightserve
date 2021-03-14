@@ -122,6 +122,20 @@ This is the actual url pathname without the query parameters.
 
 The `query` object contains all the query parameters as an object.
 
+#### `body: object`
+
+The `body` object contains all the request body (for all requests but multipart ones where it is undefined).
+
+#### `multipart: object`
+
+The `multipart` object contains the request multipart body.
+
+Each key of the object is a field name, each value is an object with a `type` property which value can be `field` or `file`.
+
+**For fields** : The value is the string representation of what has been sent.
+
+**For files** : The value is a buffer containing the file data.
+
 #### `context: object`
 
 The context is a flexible object you can use to store what you want.
