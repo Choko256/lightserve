@@ -72,7 +72,7 @@ class App {
         enumerable : true,
         writable : false,
         value : this.corsConfiguration,
-      }
+      },
     })
     Object.defineProperties(res, {
       cookie : {
@@ -173,11 +173,10 @@ class App {
           await mw.fn(req, res)
         }
       }
+      return true
     } catch (err) {
       if (!this.errorHandler) {
-        return res.error({
-          message : err.message,
-        }, 500)
+        return res.error({ message : err.message }, 500)
       }
       return this.errorHandler(err, req, res)
     }
