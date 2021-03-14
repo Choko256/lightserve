@@ -3,7 +3,7 @@
   "version": "0.1.3",
   "description": "Lightweight NodeJS web server",
   "main": "src/index.js",
-  "repository": "ssh://git@gitv.chaksoft.eu:49005/chaksoft/light-server.git",
+  "repository": "git@github.com:Choko256/lightserve.git",
   "author": "Michael Chacaton <mchacaton@chaksoft.eu>",
   "license": "GPL-3.0",
   "devDependencies": {
