@@ -1,6 +1,6 @@
 {
   "name": "lightserve",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Lightweight NodeJS web server",
   "main": "src/index.js",
   "repository": "git@github.com:Choko256/lightserve.git",
